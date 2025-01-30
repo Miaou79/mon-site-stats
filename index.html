@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statistiques de Match</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- En-tête -->
+  <header>
+    <h1>Statistiques de Match</h1>
+  </header>
+
+  <!-- Contenu principal -->
+  <main>
+    <!-- Section du formulaire -->
+    <section>
+      <h2>Ajouter des Statistiques</h2>
+      <form id="match-stats-form">
+        <!-- Sélection du joueur -->
+        <div>
+          <label for="player-name">Joueur :</label>
+          <select id="player-name">
+            <option value="" disabled selected>Choisissez un joueur</option>
+          </select>
+          <button type="button" id="add-player-btn">+</button>
+        </div>
+
+        <!-- Formulaire pour ajouter un joueur -->
+        <div id="add-player-form" style="display: none; margin-top: 10px;">
+          <input type="text" id="new-player-name" placeholder="Nom du joueur" />
+          <button type="button" id="save-player-btn">Ajouter</button>
+        </div>
+
+        <!-- Champs pour les statistiques -->
+        <div>
+          <label for="goals">Buts :</label>
+          <input type="number" id="goals" min="0" />
+        </div>
+
+        <div>
+          <label for="assists">Passes décisives :</label>
+          <input type="number" id="assists" min="0" />
+        </div>
+
+        <div>
+          <label for="match-date">Date du match :</label>
+          <input type="date" id="match-date" />
+        </div>
+
+        <button type="submit">Ajouter les Statistiques</button>
+      </form>
+    </section>
+
+    <!-- Section des joueurs enregistrés -->
+    <section>
+      <h2>Liste des Joueurs</h2>
+      <ul id="player-list"></ul>
+    </section>
+
+    <!-- Section des statistiques par date -->
+    <section>
+      <h2>Statistiques par Date</h2>
+      <div id="date-container"></div>
+    </section>
+
+    <!-- Section du graphique -->
+    <section>
+      <h2>Graphique des Performances</h2>
+      <canvas id="stats-chart"></canvas>
+    </section>
+  </main>
+
+  <!-- Script JS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const matchDateInput = document.getElementById('match-date');
+      if (!matchDateInput.value) {
+        const today = new Date().toISOString().split('T')[0];
+        matchDateInput.value = today; // Définit la date par défaut à aujourd'hui
+      }
+    });
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

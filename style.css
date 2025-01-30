@@ -1,0 +1,141 @@
+/* Style général */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Header */
+header {
+    background-color: green;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+/* Sections */
+main {
+    padding: 2rem;
+}
+
+section {
+    background: white;
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Formulaire */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+form input {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+form button {
+    padding: 0.7rem;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: darkgreen;
+}
+
+/* Liste des cartes de dates */
+.date-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.date-header {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+td button {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* Liste des joueurs */
+#player-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#player-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; /* Ajoute un peu de marge entre les joueurs */
+}
+
+#player-list li span {
+    margin-right: 10px; /* Ajoute de l'espace entre le nom et le bouton supprimer */
+}
+
+/* Boutons Modifier (M) et Supprimer (S) */
+.edit-btn,
+.delete-btn {
+    margin-left: 15px; /* Ajouter plus d'espace avec les statistiques */
+    padding: 2px 6px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #ddd;
+    transition: background-color 0.3s;
+}
+
+.edit-btn:hover {
+    background-color: #4caf50; /* Vert clair pour le bouton Modifier */
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #f44336; /* Rouge pour le bouton Supprimer */
+    color: white;
+}
