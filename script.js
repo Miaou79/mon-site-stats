@@ -1,4 +1,4 @@
-// Sélectionner les éléments du DOM  
+// Sélection des éléments du DOM
 const form = document.getElementById('match-stats-form');
 const dateContainer = document.getElementById('date-container');
 const playerSelect = document.getElementById('player-name');
@@ -8,15 +8,22 @@ const newPlayerInput = document.getElementById('new-player-name');
 const savePlayerBtn = document.getElementById('save-player-btn');
 const ctx = document.getElementById('stats-chart').getContext('2d');
 
-// Charger les joueurs sauvegardés au démarrage
+// Variables globales
 let playersList = JSON.parse(localStorage.getItem('playersList')) || [];
-
-// Charger les statistiques sauvegardées
 let statsData = JSON.parse(localStorage.getItem('statsData')) || [];
-statsData.sort((a, b) => new Date(a.date) - new Date(b.date)); // Toujours trier par date
+let editIndex = null; // Index de la statistique en cours d'édition
 
-// Variable pour suivre l'index de la statistique en cours d'édition
-let editIndex = null;
+// Tri des statistiques par date
+statsData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+// Fonction pour afficher un message toast
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
 
 // Mettre à jour la liste déroulante des joueurs
 function updatePlayerSelect() {
@@ -38,37 +45,47 @@ addPlayerBtn.addEventListener('click', () => {
 // Sauvegarder un joueur et l'ajouter à la liste déroulante
 savePlayerBtn.addEventListener('click', () => {
     const playerName = newPlayerInput.value.trim();
-    if (playerName && !playersList.includes(playerName)) {
-        playersList.push(playerName);
-        localStorage.setItem('playersList', JSON.stringify(playersList));
-        updatePlayerSelect();
+    if (!playerName) {
+        showToast('Veuillez entrer un nom de joueur.', 'error');
+        return;
     }
+    if (playersList.includes(playerName)) {
+        showToast('Ce joueur existe déjà.', 'error');
+        return;
+    }
+
+    playersList.push(playerName);
+    localStorage.setItem('playersList', JSON.stringify(playersList));
+    updatePlayerSelect();
+    displayPlayersList();
     newPlayerInput.value = '';
     addPlayerForm.style.display = 'none';
+    showToast('Joueur ajouté avec succès!');
 });
 
-// Fonction pour supprimer un joueur de la liste
+// Supprimer un joueur de la liste
 function removePlayer(playerName) {
     playersList = playersList.filter(player => player !== playerName);
-    localStorage.setItem('playersList', JSON.stringify(playersList)); // Sauvegarder les changements
-    updatePlayerSelect(); // Mettre à jour la liste déroulante
+    localStorage.setItem('playersList', JSON.stringify(playersList));
+    updatePlayerSelect();
+    displayPlayersList();
+    showToast('Joueur supprimé avec succès!');
 }
 
 // Afficher la liste des joueurs avec des boutons de suppression
 function displayPlayersList() {
     const playerList = document.getElementById('player-list');
-    playerList.innerHTML = ''; // Réinitialiser la liste
+    playerList.innerHTML = '';
     playersList.forEach(player => {
         const li = document.createElement('li');
         li.textContent = player;
 
-        // Bouton "Supprimer"
         const removeButton = document.createElement('button');
         removeButton.textContent = 'Supprimer';
+        removeButton.setAttribute('aria-label', `Supprimer le joueur ${player}`);
         removeButton.addEventListener('click', () => {
             if (confirm(`Êtes-vous sûr de vouloir supprimer le joueur "${player}" ?`)) {
-                removePlayer(player); // Supprimer le joueur
-                displayPlayersList(); // Réactualiser l'affichage
+                removePlayer(player);
             }
         });
 
@@ -77,13 +94,20 @@ function displayPlayersList() {
     });
 }
 
+// Regrouper les statistiques par date
+function groupByDate() {
+    return statsData.reduce((acc, stat) => {
+        if (!acc[stat.date]) acc[stat.date] = [];
+        acc[stat.date].push(stat);
+        return acc;
+    }, {});
+}
 
-// Fonction mise à jour : afficher les statistiques sous forme de tableau
+// Mettre à jour les cartes de date avec les statistiques
 function updateDateCards() {
-    console.log("Mise à jour des cartes avec les données suivantes :", statsData)
     dateContainer.innerHTML = '';
-
     const groupedStats = groupByDate();
+
     Object.keys(groupedStats).forEach((date) => {
         const card = document.createElement('div');
         card.classList.add('date-card');
@@ -93,7 +117,6 @@ function updateDateCards() {
         details.classList.add('date-details');
         details.style.display = 'none';
 
-        // Création du tableau
         const table = document.createElement('table');
         table.innerHTML = `
             <thead>
@@ -108,26 +131,24 @@ function updateDateCards() {
         `;
         const tbody = table.querySelector('tbody');
 
-        groupedStats[date].forEach((stat, index) => {
+        groupedStats[date].forEach((stat) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${stat.name}</td>
                 <td>${stat.goals}</td>
                 <td>${stat.assists}</td>
                 <td>
-                    <button class="edit-btn">M</button>
-                    <button class="delete-btn">S</button>
+                    <button class="edit-btn" aria-label="Modifier">M</button>
+                    <button class="delete-btn" aria-label="Supprimer">S</button>
                 </td>
             `;
 
-            // Bouton "Modifier"
-            row.querySelector('.edit-btn').addEventListener('click', function (event) {
+            row.querySelector('.edit-btn').addEventListener('click', (event) => {
                 event.stopPropagation();
                 editStat(statsData.indexOf(stat));
             });
 
-            // Bouton "Supprimer"
-            row.querySelector('.delete-btn').addEventListener('click', function (event) {
+            row.querySelector('.delete-btn').addEventListener('click', (event) => {
                 event.stopPropagation();
                 removeStat(statsData.indexOf(stat));
                 updateDateCards();
@@ -138,6 +159,7 @@ function updateDateCards() {
         });
 
         details.appendChild(table);
+        card.appendChild(details);
 
         card.addEventListener('click', () => {
             const isVisible = details.style.display === 'block';
@@ -145,12 +167,11 @@ function updateDateCards() {
             details.style.display = isVisible ? 'none' : 'block';
         });
 
-        card.appendChild(details);
         dateContainer.appendChild(card);
     });
 }
 
-// Fonction pour modifier une statistique
+// Modifier une statistique
 function editStat(index) {
     const stat = statsData[index];
     document.getElementById('player-name').value = stat.name;
@@ -162,77 +183,78 @@ function editStat(index) {
     form.querySelector('button[type="submit"]').textContent = 'Modifier les Statistiques';
 }
 
-// Fonction pour supprimer une statistique
+// Supprimer une statistique
 function removeStat(index) {
     statsData.splice(index, 1);
     localStorage.setItem('statsData', JSON.stringify(statsData));
+    showToast('Statistique supprimée avec succès!');
 }
 
-// Fonction pour regrouper les statistiques par date
-function groupByDate() {
-    return statsData.reduce((acc, stat) => {
-        if (!acc[stat.date]) acc[stat.date] = [];
-        acc[stat.date].push(stat);
-        return acc;
-    }, {});
-}
-
-// Fonction pour mettre à jour le graphique
+// Mettre à jour le graphique
 function updateChart() {
     const groupedStats = groupByDate();
     const dates = Object.keys(groupedStats);
-    
-    const goalsPerDate = dates.map((date) => {
-        return groupedStats[date].reduce((acc, stat) => acc + stat.goals, 0);
-    });
-    const assistsPerDate = dates.map((date) => {
-        return groupedStats[date].reduce((acc, stat) => acc + stat.assists, 0);
-    });
+
+    const goalsPerDate = dates.map((date) => groupedStats[date].reduce((acc, stat) => acc + stat.goals, 0));
+    const assistsPerDate = dates.map((date) => groupedStats[date].reduce((acc, stat) => acc + stat.assists, 0));
 
     if (window.chart) {
-        window.chart.destroy();
-    }
-
-    window.chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: dates.map((date) => new Date(date).toLocaleDateString()),
-            datasets: [
-                {
-                    label: 'Total des Buts',
-                    data: goalsPerDate,
-                    borderColor: 'green',
-                    backgroundColor: 'rgba(0, 128, 0, 0.2)',
-                    fill: true,
-                    tension: 0.1
-                },
-                {
-                    label: 'Total des Passes Décisives',
-                    data: assistsPerDate,
-                    borderColor: 'navy',
-                    backgroundColor: 'rgba(0, 0, 128, 0.2)',
-                    fill: true,
-                    tension: 0.1
+        window.chart.data.labels = dates.map((date) => new Date(date).toLocaleDateString());
+        window.chart.data.datasets[0].data = goalsPerDate;
+        window.chart.data.datasets[1].data = assistsPerDate;
+        window.chart.update();
+    } else {
+        window.chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates.map((date) => new Date(date).toLocaleDateString()),
+                datasets: [
+                    {
+                        label: 'Total des Buts',
+                        data: goalsPerDate,
+                        borderColor: 'green',
+                        backgroundColor: 'rgba(0, 128, 0, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Total des Passes Décisives',
+                        data: assistsPerDate,
+                        borderColor: 'navy',
+                        backgroundColor: 'rgba(0, 0, 128, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: 'Date du Match' } },
+                    y: { title: { display: true, text: 'Nombre' }, beginAtZero: true }
                 }
-            ]
-        },
-        options: {
-            scales: {
-                x: { title: { display: true, text: 'Date du Match' } },
-                y: { title: { display: true, text: 'Nombre' }, beginAtZero: true }
             }
-        }
-    });
+        });
+    }
 }
 
-// Ajouter un événement au formulaire pour ajouter/modifier les statistiques
-form.addEventListener('submit', function(event) {
+// Gestion du formulaire
+form.addEventListener('submit', (event) => {
     event.preventDefault();
 
     const playerName = document.getElementById('player-name').value;
     const goals = parseInt(document.getElementById('goals').value) || 0;
     const assists = parseInt(document.getElementById('assists').value) || 0;
     const matchDate = document.getElementById('match-date').value;
+
+    if (!playerName || !matchDate) {
+        showToast('Veuillez remplir tous les champs obligatoires.', 'error');
+        return;
+    }
+
+    if (isNaN(goals) || isNaN(assists) || goals < 0 || assists < 0) {
+        showToast('Les buts et les passes décisives doivent être des nombres positifs.', 'error');
+        return;
+    }
 
     if (editIndex !== null) {
         statsData[editIndex] = { date: matchDate, name: playerName, goals, assists };
@@ -243,17 +265,15 @@ form.addEventListener('submit', function(event) {
     }
 
     statsData.sort((a, b) => new Date(a.date) - new Date(b.date));
-
     localStorage.setItem('statsData', JSON.stringify(statsData));
 
     updateDateCards();
     updateChart();
-
     form.reset();
-    document.getElementById('match-date').value = matchDate;
+    showToast('Statistique enregistrée avec succès!');
 });
 
-// Charger les données sauvegardées au démarrage
+// Chargement initial
 document.addEventListener('DOMContentLoaded', () => {
     updatePlayerSelect();
     displayPlayersList();
