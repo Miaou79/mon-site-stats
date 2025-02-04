@@ -6,6 +6,30 @@
   <title>Statistiques de Match</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Styles pour les messages toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      border-radius: 5px;
+      color: white;
+      z-index: 1000;
+      opacity: 0;
+      animation: fadeInOut 3s ease-in-out;
+    }
+    .toast.success {
+      background-color: green;
+    }
+    .toast.error {
+      background-color: red;
+    }
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; }
+      10%, 90% { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
   <!-- En-tête -->
@@ -22,32 +46,32 @@
         <!-- Sélection du joueur -->
         <div>
           <label for="player-name">Joueur :</label>
-          <select id="player-name">
+          <select id="player-name" required>
             <option value="" disabled selected>Choisissez un joueur</option>
           </select>
-          <button type="button" id="add-player-btn">+</button>
+          <button type="button" id="add-player-btn" aria-label="Ajouter un joueur">+</button>
         </div>
 
         <!-- Formulaire pour ajouter un joueur -->
         <div id="add-player-form" style="display: none; margin-top: 10px;">
-          <input type="text" id="new-player-name" placeholder="Nom du joueur" />
+          <input type="text" id="new-player-name" placeholder="Nom du joueur" required />
           <button type="button" id="save-player-btn">Ajouter</button>
         </div>
 
         <!-- Champs pour les statistiques -->
         <div>
           <label for="goals">Buts :</label>
-          <input type="number" id="goals" min="0" />
+          <input type="number" id="goals" min="0" required />
         </div>
 
         <div>
           <label for="assists">Passes décisives :</label>
-          <input type="number" id="assists" min="0" />
+          <input type="number" id="assists" min="0" required />
         </div>
 
         <div>
           <label for="match-date">Date du match :</label>
-          <input type="date" id="match-date" />
+          <input type="date" id="match-date" required />
         </div>
 
         <button type="submit">Ajouter les Statistiques</button>
