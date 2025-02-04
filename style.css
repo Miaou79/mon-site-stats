@@ -5,6 +5,7 @@ body {
     padding: 0;
     background-color: #f4f4f4;
     color: #333;
+    line-height: 1.6;
 }
 
 /* Header */
@@ -13,91 +14,90 @@ header {
     color: white;
     padding: 1rem;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
     margin: 0;
+    font-size: 2rem;
+}
+
+/* Conteneur principal */
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Sections */
-main {
-    padding: 2rem;
-}
-
 section {
     background: white;
-    margin: 1rem 0;
-    padding: 1rem;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+    margin-top: 0;
+    color: green;
+    font-size: 1.5rem;
 }
 
 /* Formulaire */
 form {
     display: flex;
     flex-direction: column;
+    gap: 1rem;
 }
 
 form label {
-    margin-bottom: 0.5rem;
     font-weight: bold;
+    margin-bottom: 0.5rem;
 }
 
-form input {
-    margin-bottom: 1rem;
-    padding: 0.5rem;
+form input,
+form select {
+    padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 4px;
+    font-size: 1rem;
+}
+
+form input:focus,
+form select:focus {
+    border-color: green;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 128, 0, 0.2);
 }
 
 form button {
-    padding: 0.7rem;
+    padding: 0.75rem;
     background-color: green;
     color: white;
     border: none;
     border-radius: 4px;
+    font-size: 1rem;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 form button:hover {
     background-color: darkgreen;
 }
 
-/* Liste des cartes de dates */
-.date-card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1rem;
+/* Formulaire d'ajout de joueur */
+#add-player-form {
+    display: none;
+    margin-top: 1rem;
+    background-color: #f9f9f9;
     padding: 1rem;
-}
-
-.date-header {
-    font-weight: bold;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-}
-
-th, td {
-    padding: 8px;
-    text-align: center;
+    border-radius: 4px;
     border: 1px solid #ddd;
 }
 
-th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-}
-
-td button {
-    margin-left: 10px;
-    cursor: pointer;
+#add-player-form input {
+    margin-bottom: 0.5rem;
 }
 
 /* Liste des joueurs */
@@ -110,32 +110,123 @@ td button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px; /* Ajoute un peu de marge entre les joueurs */
+    padding: 0.75rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
 }
 
-#player-list li span {
-    margin-right: 10px; /* Ajoute de l'espace entre le nom et le bouton supprimer */
+#player-list li button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#player-list li button:hover {
+    background-color: #d32f2f;
+}
+
+/* Cartes de dates */
+.date-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: box-shadow 0.3s;
+}
+
+.date-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.date-details {
+    display: none;
+    margin-top: 1rem;
+}
+
+/* Tableau des statistiques */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
 }
 
 /* Boutons Modifier (M) et Supprimer (S) */
 .edit-btn,
 .delete-btn {
-    margin-left: 15px; /* Ajouter plus d'espace avec les statistiques */
-    padding: 2px 6px;
+    padding: 0.5rem 0.75rem;
     border: none;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 0.9rem;
     cursor: pointer;
-    background-color: #ddd;
     transition: background-color 0.3s;
 }
 
+.edit-btn {
+    background-color: #4caf50;
+    color: white;
+    margin-right: 0.5rem;
+}
+
 .edit-btn:hover {
-    background-color: #4caf50; /* Vert clair pour le bouton Modifier */
+    background-color: #45a049;
+}
+
+.delete-btn {
+    background-color: #f44336;
     color: white;
 }
 
 .delete-btn:hover {
-    background-color: #f44336; /* Rouge pour le bouton Supprimer */
+    background-color: #d32f2f;
+}
+
+/* Graphique */
+#stats-chart {
+    margin-top: 1rem;
+    max-width: 100%;
+}
+
+/* Messages Toast */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
     color: white;
+    z-index: 1000;
+    opacity: 0;
+    animation: fadeInOut 3s ease-in-out;
+}
+
+.toast.success {
+    background-color: green;
+}
+
+.toast.error {
+    background-color: #f44336;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; transform: translateY(20px); }
+    10%, 90% { opacity: 1; transform: translateY(0); }
 }
